@@ -78,6 +78,7 @@ class GameState:
     def __init__(self):
         self.locations = self._create_locations()
         self.quests = self._create_quests()
+        self.location_loot = self._create_loot()
         self.player = self._create_player()
         self.current_location = "Ironhaven"
 
@@ -102,10 +103,23 @@ class GameState:
             type="consumable",
             effects=[Effect(name="Healing", stat_changes={"vitality": 5}), Effect(name="Focus", stat_changes={"spirit": 2}, duration=2)],
         )
+        invigorating_brew = Item(
+            name="Invigorating Brew",
+            description="A spiced drink that bolsters strength while dulling caution.",
+            type="consumable",
+            effects=[Effect(name="Might", stat_changes={"strength": 3}, duration=2), Effect(name="Reckless", stat_changes={"defense": -1}, duration=2)],
+        )
+        warding_charm = Item(
+            name="Warding Charm",
+            description="A small charm carved with sigils that deflect minor harm.",
+            type="trinket",
+            power=1,
+            effects=[Effect(name="Ward", stat_changes={"defense": 2}, duration=3)],
+        )
         player = Character(
             name="Arden",
             stats={"strength": 8, "defense": 6, "spirit": 5, "vitality": 20},
-            inventory=[starter_weapon, starter_armor, potion],
+            inventory=[starter_weapon, starter_armor, potion, invigorating_brew, warding_charm],
             companion="Mistral the Fox",
         )
         player.equipped_weapon = starter_weapon
@@ -117,38 +131,191 @@ class GameState:
             "Ironhaven": Location(
                 name="Ironhaven",
                 description="A fortress city built inside a caldera. Blacksmiths and engineers thrive here.",
-                connections={"north": "Whispering Wilds", "east": "Glimmerfen", "travel gate": "Skyreach"},
-                encounters=["tinkers", "sparring guards"],
-                vendors=["Forge of Dawns", "Clockwork Curios"],
+                connections={"north": "Whispering Wilds", "east": "Glimmerfen", "travel gate": "Skyreach", "west": "Obsidian Coast", "tram": "Emberfall Forge"},
+                encounters=["tinkers", "sparring guards", "runaway constructs"],
+                vendors=["Forge of Dawns", "Clockwork Curios", "Inventor's Row"],
             ),
             "Whispering Wilds": Location(
                 name="Whispering Wilds",
                 description="Ancient forest with trees that carry echoes of old spells.",
-                connections={"south": "Ironhaven", "east": "Frosted Peaks"},
-                encounters=["moss wisps", "feral sprites"],
-                vendors=["Wanderer's Cache"],
+                connections={"south": "Ironhaven", "east": "Frosted Peaks", "grove": "Starwell Oasis"},
+                encounters=["moss wisps", "feral sprites", "rootbound beasts"],
+                vendors=["Wanderer's Cache", "Listening Stone"],
             ),
             "Glimmerfen": Location(
                 name="Glimmerfen",
                 description="A luminous swamp where phosphor blooms and hidden ruins wait.",
-                connections={"west": "Ironhaven", "north": "Skyreach"},
-                encounters=["swamp shamblers", "fog sirens"],
-                vendors=["Floating Bazaar"],
+                connections={"west": "Ironhaven", "north": "Skyreach", "ruins": "Hollow Warrens"},
+                encounters=["swamp shamblers", "fog sirens", "luminous leeches"],
+                vendors=["Floating Bazaar", "Boglight Ledger"],
             ),
             "Skyreach": Location(
                 name="Skyreach",
                 description="An aerial archipelago connected by rope bridges and zeppelin docks.",
-                connections={"south": "Glimmerfen", "west": "Ironhaven", "summit": "Frosted Peaks"},
-                encounters=["sky pirates", "wind drakes"],
-                vendors=["Cloudspire Emporium"],
+                connections={"south": "Glimmerfen", "west": "Ironhaven", "summit": "Frosted Peaks", "east": "Zephyr Span"},
+                encounters=["sky pirates", "wind drakes", "aether gulls"],
+                vendors=["Cloudspire Emporium", "Ballast Market"],
             ),
             "Frosted Peaks": Location(
                 name="Frosted Peaks",
                 description="Icy mountains riddled with caves and a dormant observatory.",
-                connections={"west": "Whispering Wilds", "summit": "Skyreach"},
-                encounters=["icebound golems", "aurora spirits"],
-                vendors=["Crag Market"],
+                connections={"west": "Whispering Wilds", "summit": "Skyreach", "caverns": "Crystal Hollows"},
+                encounters=["icebound golems", "aurora spirits", "frost wyrmlings"],
+                vendors=["Crag Market", "Observatory Remnants"],
             ),
+            "Obsidian Coast": Location(
+                name="Obsidian Coast",
+                description="Shoreline of black glass beaches and shipwrecked corsairs.",
+                connections={"east": "Ironhaven", "cliffs": "Zephyr Span"},
+                encounters=["glassed revenants", "corsair raiders", "tidal phantoms"],
+                vendors=["Shattered Dock", "Driftwood Traders"],
+            ),
+            "Emberfall Forge": Location(
+                name="Emberfall Forge",
+                description="A subterranean foundry fueled by magma falls and rune vents.",
+                connections={"elevator": "Ironhaven", "tunnel": "Hollow Warrens"},
+                encounters=["ember drudges", "slag elementals", "molten mites"],
+                vendors=["Great Crucible", "Ashen Market"],
+            ),
+            "Zephyr Span": Location(
+                name="Zephyr Span",
+                description="Wind-scoured bridge of stone arches suspended over the sea.",
+                connections={"west": "Skyreach", "south": "Obsidian Coast", "arch": "Starwell Oasis"},
+                encounters=["storm djinn", "bridge lurkers"],
+                vendors=["Gale's Rest"],
+            ),
+            "Starwell Oasis": Location(
+                name="Starwell Oasis",
+                description="Desert grove surrounding a star-lit well said to whisper futures.",
+                connections={"north": "Whispering Wilds", "arch": "Zephyr Span", "dunes": "Glass Dunes"},
+                encounters=["sand shades", "oracle crows", "wayward pilgrims"],
+                vendors=["Oasis Caravan", "Stargazer's Table"],
+            ),
+            "Hollow Warrens": Location(
+                name="Hollow Warrens",
+                description="Collapsed ruins beneath Glimmerfen crawling with echoing beasts.",
+                connections={"surface": "Glimmerfen", "tunnel": "Emberfall Forge", "crawl": "Crystal Hollows"},
+                encounters=["echo bats", "bonepickers", "rune gnawers"],
+                vendors=["Shadowed Barter"],
+            ),
+            "Crystal Hollows": Location(
+                name="Crystal Hollows",
+                description="Iridescent caverns filled with resonant crystals and cold air.",
+                connections={"crawl": "Hollow Warrens", "caverns": "Frosted Peaks"},
+                encounters=["resonant spiders", "crystal golems"],
+                vendors=["Glittering Nook"],
+            ),
+            "Glass Dunes": Location(
+                name="Glass Dunes",
+                description="Sweeping dunes of mirror-like sand that bend light and memory.",
+                connections={"oasis": "Starwell Oasis"},
+                encounters=["mirror lurkers", "sun wraiths", "glass scorpions"],
+                vendors=["Nomad's Crossing"],
+            ),
+        }
+
+    def _create_loot(self) -> Dict[str, List[Item]]:
+        return {
+            "Ironhaven": [
+                Item(
+                    name="Engineer Toolkit",
+                    description="Tools that improve delicate work and gadget repairs.",
+                    type="trinket",
+                    effects=[Effect(name="Fine Tuning", stat_changes={"spirit": 1, "defense": 1}, duration=4)],
+                )
+            ],
+            "Whispering Wilds": [
+                Item(
+                    name="Grove Pendant",
+                    description="A pendant etched with leaf sigils that calm spirits.",
+                    type="trinket",
+                    effects=[Effect(name="Calm", stat_changes={"spirit": 2}, duration=3)],
+                )
+            ],
+            "Glimmerfen": [
+                Item(
+                    name="Phosphor Vial",
+                    description="Glowing swamp sample that heightens senses and attracts insects.",
+                    type="consumable",
+                    effects=[Effect(name="Senses", stat_changes={"spirit": 2}, duration=2), Effect(name="Irritation", stat_changes={"defense": -1}, duration=1)],
+                )
+            ],
+            "Skyreach": [
+                Item(
+                    name="Zeppelin Rations",
+                    description="Airship dried meats boosting vitality.",
+                    type="consumable",
+                    effects=[Effect(name="Hearty", stat_changes={"vitality": 6})],
+                )
+            ],
+            "Frosted Peaks": [
+                Item(
+                    name="Froststeel Splinter",
+                    description="Shard of metal that hardens armor when embedded.",
+                    type="armor",
+                    power=3,
+                    effects=[Effect(name="Cold Ward", stat_changes={"defense": 2}, duration=4)],
+                )
+            ],
+            "Obsidian Coast": [
+                Item(
+                    name="Corsair Cutlass",
+                    description="Pirate blade balanced for swift strikes.",
+                    type="weapon",
+                    power=6,
+                    effects=[Effect(name="Swagger", stat_changes={"strength": 2}, duration=3)],
+                )
+            ],
+            "Emberfall Forge": [
+                Item(
+                    name="Emberglass Phial",
+                    description="Liquid glass that courses like fire, energizing the bearer.",
+                    type="consumable",
+                    effects=[Effect(name="Blaze", stat_changes={"strength": 2, "spirit": 1}, duration=3)],
+                )
+            ],
+            "Zephyr Span": [
+                Item(
+                    name="Windlash Cloak",
+                    description="Billowing cloak that lets you lean into gales.",
+                    type="armor",
+                    power=4,
+                    effects=[Effect(name="Gale Step", stat_changes={"defense": 1, "spirit": 1}, duration=4)],
+                )
+            ],
+            "Starwell Oasis": [
+                Item(
+                    name="Starlit Sand",
+                    description="Sand that refracts starlight and clears the mind.",
+                    type="consumable",
+                    effects=[Effect(name="Clarity", stat_changes={"spirit": 3}, duration=2)],
+                )
+            ],
+            "Hollow Warrens": [
+                Item(
+                    name="Bonechime Blade",
+                    description="Blade strung with bone chimes that disorient foes.",
+                    type="weapon",
+                    power=7,
+                    effects=[Effect(name="Rattle", stat_changes={"spirit": 1}, duration=2)],
+                )
+            ],
+            "Crystal Hollows": [
+                Item(
+                    name="Resonance Shard",
+                    description="Crystal shard that vibrates with latent energy.",
+                    type="trinket",
+                    effects=[Effect(name="Echo Shield", stat_changes={"defense": 2}, duration=3)],
+                )
+            ],
+            "Glass Dunes": [
+                Item(
+                    name="Sunmirror Draught",
+                    description="Potion that reflects light to blind and energize.",
+                    type="consumable",
+                    effects=[Effect(name="Radiance", stat_changes={"strength": 1, "spirit": 2}, duration=3)],
+                )
+            ],
         }
 
     def _create_quests(self) -> Dict[str, Quest]:
@@ -167,6 +334,24 @@ class GameState:
             name="Forge Seal",
             description="Symbol of master smiths, proves your worth in Ironhaven.",
             type="quest",
+        )
+        map_cache = Item(
+            name="Skychart Cache",
+            description="Hollow tubes of parchment mapping secret air currents.",
+            type="quest",
+            effects=[Effect(name="Navigator", stat_changes={"spirit": 2}, duration=5)],
+        )
+        obsidian_crest = Item(
+            name="Obsidian Crest",
+            description="Insignia of the coast's free captains granting sea passage.",
+            type="quest",
+            effects=[Effect(name="Authority", stat_changes={"strength": 1, "defense": 1}, duration=3)],
+        )
+        starwell_water = Item(
+            name="Starwell Water",
+            description="Glowing water rumored to heal any ailment.",
+            type="quest",
+            effects=[Effect(name="Renewal", stat_changes={"vitality": 10})],
         )
         return {
             "Echoes of the Forest": Quest(
@@ -199,7 +384,47 @@ class GameState:
                 ],
                 rewards=[forge_seal],
             ),
+            "Skychart Errand": Quest(
+                name="Skychart Errand",
+                summary="Collect charts to guide airships through unsteady currents.",
+                steps=[
+                    QuestStep("Gather drift charts from Zephyr Span couriers"),
+                    QuestStep("Secure aether ink from Skyreach pirates"),
+                    QuestStep("Deliver the completed sky map to Ironhaven's dockmaster"),
+                ],
+                rewards=[map_cache],
+            ),
+            "Corsair Detente": Quest(
+                name="Corsair Detente",
+                summary="Broker peace between the Obsidian Coast raiders and Ironhaven merchants.",
+                steps=[
+                    QuestStep("Recover the lost crest from corsair raiders"),
+                    QuestStep("Escort trade envoy safely across Zephyr Span"),
+                    QuestStep("Host a parley at the Shattered Dock without bloodshed"),
+                ],
+                rewards=[obsidian_crest],
+            ),
+            "Starwell Pilgrimage": Quest(
+                name="Starwell Pilgrimage",
+                summary="Retrieve sacred water to aid the city's ailing wardens.",
+                steps=[
+                    QuestStep("Navigate the Glass Dunes and avoid the sun wraiths"),
+                    QuestStep("Answer the oasis oracle's riddle to draw the water"),
+                    QuestStep("Return the Starwell Water to the Ironhaven infirmary"),
+                ],
+                rewards=[starwell_water],
+            ),
         }
+
+    def scavenge(self) -> str:
+        loot = self.location_loot.get(self.current_location)
+        if not loot:
+            return "Nothing to pick up here."
+        item = loot.pop(0)
+        self.player.inventory.append(item)
+        if not loot:
+            self.location_loot.pop(self.current_location, None)
+        return f"You recovered {item.name}: {item.description}"
 
     def travel(self, destination: str) -> str:
         location = self.locations[self.current_location]
@@ -215,12 +440,14 @@ class GameState:
         encounters = ", ".join(location.encounters) if location.encounters else "peaceful air"
         vendors = ", ".join(location.vendors) if location.vendors else "no vendors"
         connections = ", ".join([f"{k.title()} -> {v}" for k, v in location.connections.items()])
+        lootable = len(self.location_loot.get(location.name, []))
         return (
             f"Location: {location.name}\n"
             f"{location.description}\n"
             f"Paths: {connections}\n"
             f"Encounters: {encounters}\n"
             f"Vendors: {vendors}\n"
+            f"Discoveries: {lootable} item(s) can be scavenged here\n"
         )
 
     def describe_quests(self) -> str:
@@ -423,6 +650,7 @@ class FantasyTerminal:
                 "  inventory — list items\n"
                 "  equip <item> — equip weapon or armor\n"
                 "  use <item> — use a consumable\n"
+                "  scavenge — pick up loot in the area\n"
                 "  quests — list quests and steps\n"
                 "  track <quest name> — toggle quest tracking\n"
                 "  complete <quest name> <step#> — mark a step done\n"
@@ -439,6 +667,8 @@ class FantasyTerminal:
             return self.state.equip(" ".join(args))
         if keyword == "use" and args:
             return self.state.use_item(" ".join(args))
+        if keyword == "scavenge":
+            return self.state.scavenge()
         if keyword == "quests":
             return self.state.describe_quests()
         if keyword == "track" and args:
