@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "strong_number": "H430",
+    "lemma": "אֱלֹהִים",
+    "transliteration": "Elohim",
+    "language": "heb",
+    "morphology": "plural noun",
+    "gloss": "God, gods, judges",
+    "example_verses": "Gen 1:1",
+    "source_url": "https://biblehub.com/hebrew/430.htm"
+  },
+  {
+    "id": 2,
+    "strong_number": "G3056",
+    "lemma": "λόγος",
+    "transliteration": "logos",
+    "language": "gre",
+    "morphology": "noun",
+    "gloss": "word, message, logic",
+    "example_verses": "John 1:1",
+    "source_url": "https://biblehub.com/greek/3056.htm"
+  },
+  {
+    "id": 3,
+    "strong_number": "G25",
+    "lemma": "ἀγαπάω",
+    "transliteration": "agapao",
+    "language": "gre",
+    "morphology": "verb",
+    "gloss": "to love",
+    "example_verses": "John 3:16",
+    "source_url": "https://biblehub.com/greek/25.htm"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "verse_id": 1,
+    "content": {
+      "historical": "Links to early Jewish cosmology notes.",
+      "patristic": ["Origen on creation"],
+      "commentary": "Focus on God as sole Creator.",
+      "dictionaries": ["International Standard Bible Encyclopedia"]
+    }
+  },
+  {
+    "verse_id": 2,
+    "content": {
+      "historical": "Early church fathers on Logos theology.",
+      "patristic": ["Athanasius"],
+      "commentary": "Eternity of the Word.",
+      "dictionaries": ["Anchor Yale Bible Dictionary"]
+    }
+  }
+]

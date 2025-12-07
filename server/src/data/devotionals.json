@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "title": "God Creates",
+    "verse_refs": "Genesis 1:1",
+    "content": "Reflect on God as Creator today.",
+    "tone": "reflective",
+    "audience": "adult",
+    "length": "short",
+    "author_id": 1,
+    "published": true
+  },
+  {
+    "id": 2,
+    "title": "Love of God",
+    "verse_refs": "John 3:16",
+    "content": "Celebrate the depth of divine love.",
+    "tone": "pastoral",
+    "audience": "teen",
+    "length": "medium",
+    "author_id": 2,
+    "published": false
+  }
+]
