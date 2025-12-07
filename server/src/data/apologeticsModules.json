@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "title": "Reliability of Scripture",
+    "lessons": [
+      {"id": "l1", "title": "Manuscript Evidence", "body": "Overview of manuscripts"},
+      {"id": "l2", "title": "Internal Consistency", "body": "How the text agrees with itself"}
+    ],
+    "quizzes": [
+      {"id": "q1", "question": "How many manuscripts exist?", "type": "short", "answer": "thousands"},
+      {"id": "q2", "question": "What is the time gap to earliest copies?", "type": "mcq", "options": ["50 years", "100 years", "400 years"], "answer": "100 years"}
+    ]
+  }
+]
