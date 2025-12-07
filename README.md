@@ -11,4 +11,11 @@ A comprehensive, single-page Bible study workspace that blends planning, study, 
 - **Daily anchor** card that rotates reflective verses/themes to start a session.
 
 ## Getting started
-Open `index.html` in a browser. All data is stored locally in `localStorage`; no backend or build tools are needed.
+Open `index.html` in a browser, or run the lightweight preview server to host the page locally:
+
+```bash
+npm install
+npm start
+```
+
+The server defaults to `http://localhost:4173` and falls back to `index.html` for unknown routes, making the experience previewable in hosted environments. All data is stored locally in `localStorage`; no backend or build tools are needed.
