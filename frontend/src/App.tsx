@@ -16,7 +16,7 @@ function App() {
             Scripture Studio
           </Link>
           <nav className="space-x-4 text-sm font-medium">
-            <Link to="/bible/John/3/16">Bible</Link>
+            <Link to="/bible/KJV/John/3">Bible</Link>
             <Link to="/lexicon">Lexicon</Link>
             <Link to="/transcribe">Live Transcribe</Link>
             <Link to="/devotional">Devotional</Link>
@@ -27,7 +27,7 @@ function App() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/bible/:book/:chapter/:verse" element={<Bible />} />
+          <Route path="/bible/:translation/:book/:chapter/:verse?" element={<Bible />} />
           <Route path="/lexicon" element={<Lexicon />} />
           <Route path="/transcribe" element={<Transcribe />} />
           <Route path="/devotional" element={<Devotional />} />

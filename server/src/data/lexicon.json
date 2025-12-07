@@ -31,5 +31,71 @@
     "gloss": "to love",
     "example_verses": "John 3:16",
     "source_url": "https://biblehub.com/greek/25.htm"
+  },
+  {
+    "id": 4,
+    "strong_number": "H7225",
+    "lemma": "רֵאשִׁית",
+    "transliteration": "reshith",
+    "language": "heb",
+    "morphology": "feminine noun",
+    "gloss": "beginning, first, chief",
+    "example_verses": "Gen 1:1",
+    "source_url": "https://biblehub.com/hebrew/7225.htm"
+  },
+  {
+    "id": 5,
+    "strong_number": "H1254",
+    "lemma": "בָּרָא",
+    "transliteration": "bara",
+    "language": "heb",
+    "morphology": "verb",
+    "gloss": "to create, shape, form",
+    "example_verses": "Gen 1:1",
+    "source_url": "https://biblehub.com/hebrew/1254.htm"
+  },
+  {
+    "id": 6,
+    "strong_number": "G746",
+    "lemma": "ἀρχή",
+    "transliteration": "archē",
+    "language": "gre",
+    "morphology": "noun",
+    "gloss": "beginning, origin, first cause",
+    "example_verses": "John 1:1",
+    "source_url": "https://biblehub.com/greek/746.htm"
+  },
+  {
+    "id": 7,
+    "strong_number": "G2316",
+    "lemma": "θεός",
+    "transliteration": "theos",
+    "language": "gre",
+    "morphology": "noun",
+    "gloss": "God, deity",
+    "example_verses": "John 1:1",
+    "source_url": "https://biblehub.com/greek/2316.htm"
+  },
+  {
+    "id": 8,
+    "strong_number": "G2889",
+    "lemma": "κόσμος",
+    "transliteration": "kosmos",
+    "language": "gre",
+    "morphology": "noun",
+    "gloss": "world, universe, order",
+    "example_verses": "John 3:16",
+    "source_url": "https://biblehub.com/greek/2889.htm"
+  },
+  {
+    "id": 9,
+    "strong_number": "G2222",
+    "lemma": "ζωή",
+    "transliteration": "zoe",
+    "language": "gre",
+    "morphology": "noun",
+    "gloss": "life, both physical and spiritual",
+    "example_verses": "John 3:16",
+    "source_url": "https://biblehub.com/greek/2222.htm"
   }
 ]
