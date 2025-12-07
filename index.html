@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rooted Bible Study Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__content">
+      <p class="eyebrow">Bible study companion</p>
+      <h1>Rooted: A comprehensive hub for Scripture exploration</h1>
+      <p class="lead">
+        Plan, read, study, and journal in one place. Build daily rhythms, explore cross-references,
+        memorize verses, track prayers, and test your understanding.
+      </p>
+      <div class="hero__actions">
+        <a href="#plan" class="button button--primary">Build a reading plan</a>
+        <a href="#study" class="button button--ghost">Jump to study tools</a>
+      </div>
+      <div class="hero__metrics">
+        <div><strong id="streak-count">3</strong><span>day streak</span></div>
+        <div><strong id="plans-created">0</strong><span>plans created</span></div>
+        <div><strong id="prayers-logged">0</strong><span>prayers logged</span></div>
+      </div>
+    </div>
+    <div class="hero__panel">
+      <h3>Today's anchor</h3>
+      <div class="anchor-card">
+        <p class="anchor-ref" id="anchor-ref"></p>
+        <p class="anchor-text" id="anchor-text"></p>
+        <div class="anchor-meta">
+          <span id="anchor-theme"></span>
+          <span id="anchor-prayer"></span>
+        </div>
+      </div>
+      <button class="button button--secondary" id="shuffle-anchor">Shuffle anchor</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="plan" class="panel">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Daily momentum</p>
+          <h2>Create a reading plan</h2>
+          <p>Choose a focus, pace, and length. We'll assemble passages and set reminders.</p>
+        </div>
+        <div class="pill">Auto-saves offline</div>
+      </div>
+      <div class="grid two-cols">
+        <form class="card form" id="plan-form">
+          <label>
+            Plan name
+            <input type="text" id="plan-name" placeholder="30 days in the Gospels" required />
+          </label>
+          <label>
+            Focus
+            <select id="plan-focus">
+              <option value="gospel">Gospels</option>
+              <option value="wisdom">Wisdom literature</option>
+              <option value="pauline">Pauline letters</option>
+              <option value="prophets">Major prophets</option>
+            </select>
+          </label>
+          <label>
+            Pace (passages/day)
+            <input type="number" id="plan-pace" min="1" max="5" value="2" />
+          </label>
+          <label>
+            Duration (days)
+            <input type="number" id="plan-days" min="7" max="90" value="30" />
+          </label>
+          <label>
+            Reminder time
+            <input type="time" id="plan-time" value="07:30" />
+          </label>
+          <button class="button button--primary" type="submit">Generate plan</button>
+        </form>
+
+        <div class="card" id="plan-preview">
+          <div class="card__header">
+            <div>
+              <p class="eyebrow">Preview</p>
+              <h3 id="preview-title">No plan yet</h3>
+            </div>
+            <div class="badge" id="preview-badge">-- days</div>
+          </div>
+          <div class="plan-list" id="preview-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="study" class="panel muted">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Study suite</p>
+          <h2>Explore passages and context</h2>
+          <p>Jump into curated passages, cross-references, and original-language highlights.</p>
+        </div>
+        <div class="pill pill--ghost">Cross-reference aware</div>
+      </div>
+      <div class="grid three-cols">
+        <div class="card">
+          <label class="label-inline">Passage
+            <select id="passage-select"></select>
+          </label>
+          <div class="passage-body" id="passage-text"></div>
+          <div class="meta-grid" id="passage-meta"></div>
+        </div>
+        <div class="card">
+          <h3>Cross references</h3>
+          <ul class="chips" id="cross-list"></ul>
+          <h3>Key words</h3>
+          <ul class="keyword-list" id="keyword-list"></ul>
+        </div>
+        <div class="card">
+          <h3>Context &amp; application</h3>
+          <p id="passage-context"></p>
+          <div class="context-grid" id="application-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="memorize" class="panel">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Retention</p>
+          <h2>Memorize &amp; quiz</h2>
+          <p>Flashcards, quick quizzes, and reflective prompts to deepen recall.</p>
+        </div>
+        <div class="pill">Spaced repetition</div>
+      </div>
+      <div class="grid two-cols">
+        <div class="card" id="flashcard">
+          <div class="card__header">
+            <p class="eyebrow">Memory verse</p>
+            <div class="badge" id="flash-badge"></div>
+          </div>
+          <p class="flash-ref" id="flash-ref"></p>
+          <p class="flash-text" id="flash-text"></p>
+          <div class="flash-actions">
+            <button class="button button--ghost" id="show-flash">Reveal</button>
+            <button class="button button--secondary" id="next-flash">Next</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Quick quiz</h3>
+          <p id="quiz-question"></p>
+          <div class="quiz-options" id="quiz-options"></div>
+          <p class="quiz-feedback" id="quiz-feedback"></p>
+          <button class="button button--primary" id="next-question">Next question</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="journal" class="panel muted">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Reflection</p>
+          <h2>Journal &amp; prayer</h2>
+          <p>Capture insights, track answered prayers, and remember God's faithfulness.</p>
+        </div>
+        <div class="pill pill--ghost">Local storage</div>
+      </div>
+      <div class="grid three-cols">
+        <form class="card form" id="note-form">
+          <h3>Study notes</h3>
+          <label>Passage or theme<input type="text" id="note-ref" placeholder="Philippians 4:4-9" required /></label>
+          <label>Insight<textarea id="note-text" rows="4" placeholder="What stood out?" required></textarea></label>
+          <button class="button button--primary" type="submit">Save note</button>
+        </form>
+        <form class="card form" id="prayer-form">
+          <h3>Prayer log</h3>
+          <label>Request<textarea id="prayer-text" rows="4" placeholder="Pray for..." required></textarea></label>
+          <label class="label-inline">Status<select id="prayer-status"><option>Open</option><option>Answered</option></select></label>
+          <button class="button button--secondary" type="submit">Add prayer</button>
+        </form>
+        <div class="card" id="journal-feed">
+          <div class="tabs">
+            <button class="tab active" data-tab="notes">Notes</button>
+            <button class="tab" data-tab="prayers">Prayers</button>
+          </div>
+          <div class="tab-content" id="notes-list"></div>
+          <div class="tab-content hidden" id="prayers-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="people" class="panel">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">People &amp; themes</p>
+          <h2>Character &amp; theme explorer</h2>
+          <p>Profiles with summaries, virtues, struggles, and related passages.</p>
+        </div>
+        <div class="pill">At-a-glance timelines</div>
+      </div>
+      <div class="character-grid" id="character-grid"></div>
+    </section>
+
+    <section id="timeline" class="panel muted">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Meta view</p>
+          <h2>Storyline timeline</h2>
+          <p>Trace key events across redemptive history with paired passages.</p>
+        </div>
+        <div class="pill pill--ghost">Genesis → Revelation</div>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <h3>Rooted</h3>
+      <p>Built for personal study, small groups, and teaching prep.</p>
+    </div>
+    <div class="footer__actions">
+      <a href="#plan" class="button button--ghost">Start a plan</a>
+      <a href="#journal" class="button button--secondary">Open journal</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "rooted-bible-study-hub",
+  "version": "1.0.1",
+  "description": "Previewable single-page Bible study hub with static server",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "preview": "node server.js"
+  }
+}
