@@ -1,14 +1,17 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, render_template_string, send_from_directory
 import json, os, datetime
 from dateutil import parser as dateparser
 from rapidfuzz import process, fuzz
 from config import AUTH_TOKEN, PORT, HOST, UNUSED_DAYS, TOP_SUGGESTIONS
+from barcode_lookup import lookup_barcode
+from generate_summary import generate_summary
 
 app = Flask(__name__, static_folder='static')
 
 INVENTORY_FILE = "inventory.json"
 RECIPES_FILE = "recipes.json"
 BARCODE_FILE = "barcode_map.json"
+SUMMARY_FILE = "summary.json"
 
 def load_json(path, default):
     if not os.path.exists(path):
@@ -97,8 +100,7 @@ def add_barcode():
     qty = data.get('qty',1)
     if not barcode:
         return jsonify({'error':'no barcode'}), 400
-    barcode_map = load_json(BARCODE_FILE, {})
-    name = barcode_map.get(barcode)
+    name = lookup_barcode(barcode)
     if not name:
         name = f'unknown_{barcode}'
     entry = upsert_item(name, qty=qty, source='barcode')
@@ -114,6 +116,7 @@ def suggest():
     for r in recipes:
         needed = [normalize(x) for x in r.get('ingredients', [])]
         matched = []
+        missing = []
         for ing in needed:
             if ing in inv_keys:
                 matched.append(ing)
@@ -121,22 +124,32 @@ def suggest():
                 match, score = fuzzy_match_choice(ing, list(inv_keys), score_cutoff=75)
                 if match:
                     matched.append(match)
+                else:
+                    missing.append(ing)
         score = len(matched)/max(1,len(needed))
         expiry_pressure = 0
+        freshness_vals = []
         for m in matched:
             e = inv.get(m,{}).get('expiry')
             if e:
                 try:
                     d = dateparser.parse(e).date()
+                    freshness_vals.append((d - today).days)
                     if (d - today).days <= 3:
                         expiry_pressure += 1
                 except:
                     pass
-        if score == 1.0:
-            suggestions.append({'recipe': r['name'], 'type':'full', 'expiry_score': expiry_pressure})
-        elif score >= 0.6:
-            suggestions.append({'recipe': r['name'], 'type':'partial', 'match_score': round(score,2), 'expiry_score': expiry_pressure})
-    suggestions.sort(key=lambda x: (0 if x['type']=='full' else 1, -x.get('expiry_score',0), -x.get('match_score',0)))
+        freshness_score = sum(freshness_vals)/len(freshness_vals) if freshness_vals else float('inf')
+        if score == 1.0 or score >= 0.6:
+            suggestions.append({
+                'recipe': r['name'],
+                'type': 'full' if score == 1.0 else 'partial',
+                'match_score': round(score,2),
+                'expiry_pressure': expiry_pressure,
+                'freshness_score': freshness_score,
+                'missing_ingredients': missing
+            })
+    suggestions.sort(key=lambda x: (-x.get('match_score',0), -x.get('expiry_pressure',0), x.get('freshness_score', float('inf'))))
     return jsonify({'suggestions': suggestions[:TOP_SUGGESTIONS], 'inventory_count': len(inv)})
 
 @app.route('/inventory', methods=['GET'])
@@ -168,6 +181,12 @@ def summary():
             except:
                 pass
     return jsonify({'unused': unused, 'expiring_soon': expiring_soon})
+
+@app.route('/summary.json', methods=['GET'])
+def summary_json():
+    if not os.path.exists(SUMMARY_FILE):
+        generate_summary()
+    return send_from_directory('.', SUMMARY_FILE)
 
 INDEX_HTML = '''
 <!doctype html>
@@ -207,5 +226,7 @@ if __name__ == '__main__':
     for p,d in [(INVENTORY_FILE,{}),(RECIPES_FILE,[]),(BARCODE_FILE,{})]:
         if not os.path.exists(p):
             save_json(p,d)
+    if not os.path.exists(SUMMARY_FILE):
+        generate_summary()
     print(f"Starting Kitchen Brain on {HOST}:{PORT}")
     app.run(host=HOST, port=PORT)
