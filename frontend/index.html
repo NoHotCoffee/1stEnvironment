@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CalBell</title>
+  <meta name="theme-color" content="#228b57" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <div id="auth-screen" class="auth-screen hidden">
+    <h1>CalBell</h1>
+    <p class="tagline">Self-hosted calorie tracking</p>
+
+    <div class="card">
+      <div id="auth-error" class="error-text hidden"></div>
+
+      <div class="field">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" autocomplete="current-password" />
+      </div>
+
+      <button id="auth-submit" class="full-width">Log in</button>
+      <button id="auth-toggle" class="link-btn full-width">Need an account? Register</button>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <h1 id="page-title">Today</h1>
+    </header>
+
+    <section id="view-dashboard" class="view">
+      <div class="card">
+        <h2>Calories</h2>
+        <div class="ring-row">
+          <div class="stat">
+            <div class="value" id="dash-cal-total">0</div>
+            <div class="label">Eaten</div>
+          </div>
+          <div class="stat">
+            <div class="value" id="dash-cal-goal">0</div>
+            <div class="label">Goal</div>
+          </div>
+          <div class="stat">
+            <div class="value" id="dash-cal-remaining">0</div>
+            <div class="label">Left</div>
+          </div>
+        </div>
+        <div class="progress-bar"><div id="dash-cal-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card">
+        <h3>Macros</h3>
+        <div class="grid-2">
+          <div>
+            <label>Protein</label>
+            <div class="progress-bar"><div id="dash-protein-bar" style="width:0%"></div></div>
+            <div class="entry-meta"><span id="dash-protein-text">0 / 0g</span></div>
+          </div>
+          <div>
+            <label>Carbs</label>
+            <div class="progress-bar"><div id="dash-carb-bar" style="width:0%"></div></div>
+            <div class="entry-meta"><span id="dash-carb-text">0 / 0g</span></div>
+          </div>
+        </div>
+        <div class="spacer-top">
+          <label>Fat</label>
+          <div class="progress-bar"><div id="dash-fat-bar" style="width:0%"></div></div>
+          <div class="entry-meta"><span id="dash-fat-text">0 / 0g</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Today's food</h3>
+        <ul class="entry-list" id="dash-entry-list"></ul>
+        <p id="dash-empty" class="muted hidden">Nothing logged yet today.</p>
+      </div>
+    </section>
+
+    <section id="view-add" class="view hidden">
+      <div class="scan-actions">
+        <button data-tab="barcode" class="add-tab active"><span class="icon">📷</span>Scan barcode</button>
+        <button data-tab="photo" class="add-tab"><span class="icon">🍽️</span>Photo of food</button>
+        <button data-tab="manual" class="add-tab"><span class="icon">✍️</span>Manual entry</button>
+      </div>
+
+      <div id="add-barcode" class="add-panel">
+        <div class="card">
+          <div id="barcode-unsupported" class="muted hidden">
+            Live camera scanning isn't supported in this browser. Enter the barcode manually below.
+          </div>
+          <video id="scanner-video" class="hidden" playsinline muted></video>
+          <div class="grid-2 spacer-top">
+            <button id="scan-start">Start camera scan</button>
+            <button id="scan-stop" class="secondary hidden">Stop</button>
+          </div>
+          <div class="field spacer-top">
+            <label for="barcode-manual">Or enter barcode</label>
+            <input type="text" id="barcode-manual" inputmode="numeric" placeholder="e.g. 3017620422003" />
+          </div>
+          <button id="barcode-lookup" class="full-width">Look up</button>
+          <div id="barcode-error" class="error-text hidden"></div>
+        </div>
+
+        <div id="barcode-result" class="card hidden">
+          <h3 id="barcode-name"></h3>
+          <p class="muted" id="barcode-brand"></p>
+          <p class="muted" id="barcode-per100"></p>
+          <div class="field">
+            <label>Serving size (grams)</label>
+            <input type="number" id="barcode-serving" value="100" min="1" />
+          </div>
+          <div class="field">
+            <label>Meal</label>
+            <select id="barcode-meal">
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snack" selected>Snack</option>
+            </select>
+          </div>
+          <button id="barcode-add" class="full-width">Add to diary</button>
+        </div>
+      </div>
+
+      <div id="add-photo" class="add-panel hidden">
+        <div class="card">
+          <p class="muted">Take a photo of your food. Recognition runs on your own server (self-hosted, open-source model) and estimates nutrition per 100g — adjust the serving size for accuracy.</p>
+          <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden" />
+          <button id="photo-take" class="full-width">Take / choose photo</button>
+          <div id="photo-error" class="error-text hidden"></div>
+        </div>
+
+        <div id="photo-result" class="card hidden">
+          <h3>Is this your food?</h3>
+          <div id="photo-candidates"></div>
+          <div class="field spacer-top">
+            <label>Serving size (grams)</label>
+            <input type="number" id="photo-serving" value="150" min="1" />
+          </div>
+          <div class="field">
+            <label>Meal</label>
+            <select id="photo-meal">
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snack" selected>Snack</option>
+            </select>
+          </div>
+          <button id="photo-add" class="full-width" disabled>Add to diary</button>
+        </div>
+      </div>
+
+      <div id="add-manual" class="add-panel hidden">
+        <div class="card">
+          <div class="field">
+            <label>Food name</label>
+            <input type="text" id="manual-name" />
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Calories</label>
+              <input type="number" id="manual-calories" />
+            </div>
+            <div class="field">
+              <label>Serving (g)</label>
+              <input type="number" id="manual-serving" value="100" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Protein (g)</label>
+              <input type="number" id="manual-protein" value="0" />
+            </div>
+            <div class="field">
+              <label>Carbs (g)</label>
+              <input type="number" id="manual-carb" value="0" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Fat (g)</label>
+            <input type="number" id="manual-fat" value="0" />
+          </div>
+          <div class="field">
+            <label>Meal</label>
+            <select id="manual-meal">
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snack" selected>Snack</option>
+            </select>
+          </div>
+          <button id="manual-add" class="full-width">Add to diary</button>
+          <div id="manual-error" class="error-text hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-diary" class="view hidden">
+      <div class="card">
+        <label for="diary-date">Date</label>
+        <input type="date" id="diary-date" />
+      </div>
+      <div class="card">
+        <ul class="entry-list" id="diary-entry-list"></ul>
+        <p id="diary-empty" class="muted hidden">No entries for this day.</p>
+      </div>
+    </section>
+
+    <section id="view-settings" class="view hidden">
+      <div class="card">
+        <h3>Daily goals</h3>
+        <div class="field">
+          <label>Calories</label>
+          <input type="number" id="goal-calories" />
+        </div>
+        <div class="field">
+          <label>Protein (g)</label>
+          <input type="number" id="goal-protein" />
+        </div>
+        <div class="field">
+          <label>Carbs (g)</label>
+          <input type="number" id="goal-carb" />
+        </div>
+        <div class="field">
+          <label>Fat (g)</label>
+          <input type="number" id="goal-fat" />
+        </div>
+        <button id="goals-save" class="full-width">Save goals</button>
+        <div id="goals-saved" class="muted hidden spacer-top">Saved.</div>
+      </div>
+      <div class="card">
+        <div id="settings-email" class="muted"></div>
+        <button id="logout-btn" class="danger full-width spacer-top">Log out</button>
+      </div>
+    </section>
+
+    <nav class="tabbar">
+      <button data-view="dashboard" class="nav-btn active"><span class="icon">🏠</span>Today</button>
+      <button data-view="add" class="nav-btn"><span class="icon">➕</span>Add</button>
+      <button data-view="diary" class="nav-btn"><span class="icon">📔</span>History</button>
+      <button data-view="settings" class="nav-btn"><span class="icon">⚙️</span>Settings</button>
+    </nav>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

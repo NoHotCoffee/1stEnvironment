@@ -1,0 +1,15 @@
+services:
+  calbell:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - calbell_data:/data
+    environment:
+      - CALBELL_SECRET_KEY=${CALBELL_SECRET_KEY:-please-change-this-secret}
+    restart: unless-stopped
+
+volumes:
+  calbell_data:
