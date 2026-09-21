@@ -1,0 +1,6 @@
+[
+  {"name": "Spinach Omelet", "ingredients": ["egg", "spinach", "cheese"]},
+  {"name": "Chicken Fried Rice", "ingredients": ["chicken breast", "rice", "egg"]},
+  {"name": "Rice Bowl", "ingredients": ["rice", "spinach"]},
+  {"name": "Tomato Pasta", "ingredients": ["pasta", "canned tomatoes", "olive oil"]}
+]

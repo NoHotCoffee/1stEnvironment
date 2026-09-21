@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+inventory.json
+summary.json
+*.pyc
+.env
